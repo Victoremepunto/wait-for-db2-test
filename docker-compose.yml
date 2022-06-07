@@ -1,0 +1,37 @@
+services:
+  timer:
+    image: registry.access.redhat.com/ubi8/ubi-minimal:${UBI_IMAGE_TAG:-8.6-751}
+    environment:
+      DB2_SERVER: http://db2server:50000
+      DB2INST1_PASSWORD: ${DB2INST1_PASSWORD}
+      DB2INSTANCE: ${DB2INSTANCE}
+      DBNAME: ${DBNAME}
+    volumes:
+      - type: bind
+        source: ${PWD}/wait_for_db2.sh
+        target: /run/wait_for_db2.sh:z
+  db2server:
+    image: ibmcom/db2:${DB2_IMAGE_TAG:-latest}
+    ports:
+      - "50000:50000"
+    restart: always
+    environment:
+      LICENSE: ${LICENSE}
+      DB2INSTANCE: ${DB2INSTANCE}
+      DB2INST1_PASSWORD: ${DB2INST1_PASSWORD}
+      DBNAME: ${DBNAME}
+      BLU: ${BLU}
+      ENABLE_ORACLE_COMPATIBILITY: ${ENABLE_ORACLE_COMPATIBILITY}
+      UPDATEAVAIL: ${UPDATEAVAIL}
+      TO_CREATE_SAMPLEDB: ${TO_CREATE_SAMPLEDB}
+      REPODB: ${REPODB}
+      IS_OSXFS: ${IS_OSXFS}
+      PERSISTENT_HOME: ${PERSISTENT_HOME}
+      HADR_ENABLED: ${HADR_ENABLED}
+      ETCD_ENDPOINT: ${ETCD_ENDPOINT}
+      ETCD_USERNAME: ${ETCD_USERNAME}
+      ETCD_PASSWORD: ${ETCD_PASSWORD}
+    volumes:
+      - type: bind
+        source: ${PWD}/database
+        target: /database:z
